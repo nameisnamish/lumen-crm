@@ -8,7 +8,7 @@ import { Spinner } from "./components/ui";
 // Code splitting with React.lazy
 const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Dashboard = lazy(() => import("./pages/dashboard/DashboardPage"));
 const LeadsPage = lazy(() => import("./pages/leads/LeadsPage"));
 const LeadDetailPage = lazy(() => import("./pages/leads/LeadDetailPage"));
 const LeadOverviewTab = lazy(() => import("./pages/leads/LeadOverviewTab"));
@@ -17,10 +17,10 @@ const LeadNotesTab = lazy(() => import("./pages/leads/LeadNotesTab"));
 const LeadTasksTab = lazy(() => import("./pages/leads/LeadTasksTab"));
 const LeadAiTab = lazy(() => import("./pages/leads/LeadAiTab"));
 const ContactsPage = lazy(() => import("./pages/contacts/ContactsPage"));
-const Pipeline = lazy(() => import("./pages/Pipeline"));
-const Notes = lazy(() => import("./pages/Notes"));
-const Tasks = lazy(() => import("./pages/Tasks"));
-const Settings = lazy(() => import("./pages/Settings"));
+const Pipeline = lazy(() => import("./pages/pipeline/PipelinePage"));
+const Notes = lazy(() => import("./pages/notes/NotesPage"));
+const Tasks = lazy(() => import("./pages/tasks/TasksPage"));
+const Settings = lazy(() => import("./pages/settings/SettingsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function PageLoader() {
