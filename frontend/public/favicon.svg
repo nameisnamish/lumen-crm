@@ -1,16 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Solid High-Visibility Royal Electric Blue Background (No filters so browsers render 100% true blue) -->
-  <rect width="64" height="64" rx="16" fill="#0284c7" />
+  <defs>
+    <!-- Multi-stop electric cyan/blue gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#0ea5e9" />
+      <stop offset="100%" stopColor="#0369a1" />
+    </linearGradient>
 
-  <!-- Stylized Lumen "L" in Pure White -->
+    <!-- Crystal facet highlight -->
+    <linearGradient id="facetHighlight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+      <stop offset="100%" stopColor="#bae6fd" stopOpacity="0.75" />
+    </linearGradient>
+
+    <!-- Secondary translucent cyan wing -->
+    <linearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#38bdf8" />
+      <stop offset="100%" stopColor="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Premium Deep Electric Blue Squircle Base -->
+  <rect width="64" height="64" rx="18" fill="url(#bgGrad)" />
+
+  <!-- Subtle ambient inner stroke for crisp edge contrast -->
+  <rect x="1" y="1" width="62" height="62" rx="17" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5" />
+
+  <!-- Modern Geometric "L" - Left Vertical Core (Pure White) -->
   <path
-    d="M19 14 C19 12.343 20.343 11 22 11 C23.657 11 25 12.343 25 14 V40 C25 41.105 25.895 42 27 42 H44 C45.657 42 47 43.343 47 45 C47 46.657 45.657 48 44 48 H23 C20.791 48 19 46.209 19 44 Z"
+    d="M17 14 C17 12.343 18.343 11 20 11 H24 C25.657 11 27 12.343 27 14 V41 C27 42.657 25.657 44 24 44 H20 C18.343 44 17 42.657 17 41 Z"
     fill="#ffffff"
   />
 
-  <!-- Brilliant White AI Sparkle -->
+  <!-- Modern Geometric "L" - Horizontal Baseline Wing (Light Cyan Facet) -->
   <path
-    d="M45 13 C45 18.5 48.5 22 54 22 C48.5 22 45 25.5 45 31 C45 25.5 41.5 22 36 22 C41.5 22 45 18.5 45 13 Z"
+    d="M20 37 H44 C45.657 37 47 38.343 47 40 V44 C47 45.657 45.657 47 44 47 H20 C18.343 47 17 45.657 17 44 V40 C17 38.343 18.343 37 20 37 Z"
+    fill="url(#facetHighlight)"
+  />
+
+  <!-- Futuristic AI Luminary Sparkle (Top-Right High-Precision 4-Point Star) -->
+  <path
+    d="M45 12 C45 18 48.5 21.5 54.5 21.5 C48.5 21.5 45 25 45 31 C45 25 41.5 21.5 35.5 21.5 C41.5 21.5 45 18 45 12 Z"
     fill="#ffffff"
   />
+
+  <!-- Micro AI Light Core Accent -->
+  <circle cx="45" cy="21.5" r="2" fill="#7dd3fc" />
 </svg>
