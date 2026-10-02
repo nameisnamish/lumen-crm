@@ -1,0 +1,23 @@
+LUMEN CRM — BRANCH DIRECTORY & WORKFLOW
+
+Current Branch: main
+Environment: Production / Stable Release
+
+BRANCH STRUCTURE:
+----------------------------------------------------------------------
+1. main
+   - Status: Primary / Default / Production
+   - Purpose: Houses stable, fully tested, and release-ready code.
+   - Deployments: Connected to production hosting.
+
+2. develop
+   - Status: Active Integration
+   - Purpose: Day-to-day feature integration and testing before release.
+   - Workflow: All feature branches (feat/*) branch from and merge into develop.
+
+WORKFLOW RULES:
+----------------------------------------------------------------------
+- Do not commit experimental or broken code directly to main.
+- Create temporary feature branches (e.g., feat/lead-export, fix/login) from develop.
+- Merge feature branches into develop via Pull Requests.
+- Merge develop into main when preparing a production release.

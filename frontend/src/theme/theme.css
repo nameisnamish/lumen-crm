@@ -1,0 +1,23 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   AI CRM Dashboard — Custom Theme Styles & Blue Gradients
+   ───────────────────────────────────────────────────────────────────────── */
+
+.auth-hero-gradient {
+  background: linear-gradient(135deg, #082f49 0%, #0369a1 45%, #0284c7 80%, #38bdf8 100%);
+}
+
+.auth-form-bg {
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 50%, #e0f2fe 100%);
+}
+
+.auth-card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(224, 242, 254, 0.8);
+  box-shadow: 0 20px 40px -15px rgba(14, 165, 233, 0.15), 0 0 15px rgba(14, 165, 233, 0.05);
+}
+
+.blue-glow-orb {
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(3, 105, 161, 0.1) 60%, transparent 80%);
+}
