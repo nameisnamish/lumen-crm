@@ -1,43 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <!-- Background Gradient -->
-    <linearGradient id="lumenBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#0ea5e9" />
-      <stop offset="50%" stopColor="#0284c7" />
+    <!-- Rich Vibrant Blue Gradient -->
+    <linearGradient id="solidBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0284c7" />
       <stop offset="100%" stopColor="#0369a1" />
-    </linearGradient>
-
-    <!-- Inner Glow -->
-    <linearGradient id="lumenGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
-      <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-    </linearGradient>
-
-    <!-- AI Sparkle Gradient -->
-    <linearGradient id="sparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#ffffff" />
-      <stop offset="100%" stopColor="#bae6fd" />
     </linearGradient>
 
     <!-- Subtle Drop Shadow -->
     <filter id="shadow" x="-10%" y="-10%" width="125%" height="125%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0c4a6e" flood-opacity="0.35" />
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#082f49" flood-opacity="0.3" />
     </filter>
   </defs>
 
-  <!-- Squircle Base -->
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#lumenBg)" filter="url(#shadow)" />
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#lumenGlow)" />
+  <!-- Solid Rich Blue Squircle Canvas -->
+  <rect width="64" height="64" rx="16" fill="url(#solidBlue)" filter="url(#shadow)" />
 
-  <!-- Stylized "L" Prism -->
+  <!-- Stylized Lumen "L" in Pure White -->
   <path
-    d="M20 16 C20 14.343 21.343 13 23 13 C24.657 13 26 14.343 26 16 V40 C26 41.105 26.895 42 28 42 H44 C45.657 42 47 43.343 47 45 C47 46.657 45.657 48 44 48 H24 C21.791 48 20 46.209 20 44 Z"
+    d="M19 15 C19 13.343 20.343 12 22 12 C23.657 12 25 13.343 25 15 V40 C25 41.105 25.895 42 27 42 H44 C45.657 42 47 43.343 47 45 C47 46.657 45.657 48 44 48 H23 C20.791 48 19 46.209 19 44 Z"
     fill="#ffffff"
   />
 
-  <!-- Top-Right AI Luminary Sparkle -->
+  <!-- Brilliant White AI Sparkle -->
   <path
-    d="M45 15 C45 20 48 23 53 23 C48 23 45 26 45 31 C45 26 42 23 37 23 C42 23 45 20 45 15 Z"
-    fill="url(#sparkleGrad)"
+    d="M45 13 C45 18.5 48.5 22 54 22 C48.5 22 45 25.5 45 31 C45 25.5 41.5 22 36 22 C41.5 22 45 18.5 45 13 Z"
+    fill="#ffffff"
   />
 </svg>
