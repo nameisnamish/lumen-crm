@@ -1,48 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <!-- Multi-stop electric cyan/blue gradient -->
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stopColor="#0ea5e9" />
-      <stop offset="100%" stopColor="#0369a1" />
-    </linearGradient>
-
-    <!-- Crystal facet highlight -->
-    <linearGradient id="facetHighlight" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-      <stop offset="100%" stopColor="#bae6fd" stopOpacity="0.75" />
-    </linearGradient>
-
-    <!-- Secondary translucent cyan wing -->
-    <linearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
+    <!-- Sky-Blue Brand Gradient matching the dashboard logo -->
+    <linearGradient id="lumenBlue" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stopColor="#38bdf8" />
       <stop offset="100%" stopColor="#0284c7" />
     </linearGradient>
   </defs>
 
-  <!-- Premium Deep Electric Blue Squircle Base -->
-  <rect width="64" height="64" rx="18" fill="url(#bgGrad)" />
+  <!-- Circular Badge Background -->
+  <circle cx="32" cy="32" r="32" fill="url(#lumenBlue)" />
 
-  <!-- Subtle ambient inner stroke for crisp edge contrast -->
-  <rect x="1" y="1" width="62" height="62" rx="17" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5" />
-
-  <!-- Modern Geometric "L" - Left Vertical Core (Pure White) -->
+  <!-- Main 4-Point Luminous Star (Thick Stroke with Smooth Curves) -->
   <path
-    d="M17 14 C17 12.343 18.343 11 20 11 H24 C25.657 11 27 12.343 27 14 V41 C27 42.657 25.657 44 24 44 H20 C18.343 44 17 42.657 17 41 Z"
-    fill="#ffffff"
+    d="M32 15 C32 24.5 24.5 32 15 32 C24.5 32 32 39.5 32 49 C32 39.5 39.5 32 49 32 C39.5 32 32 24.5 32 15 Z"
+    stroke="#ffffff"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
   />
 
-  <!-- Modern Geometric "L" - Horizontal Baseline Wing (Light Cyan Facet) -->
+  <!-- Top-Right Plus Star -->
   <path
-    d="M20 37 H44 C45.657 37 47 38.343 47 40 V44 C47 45.657 45.657 47 44 47 H20 C18.343 47 17 45.657 17 44 V40 C17 38.343 18.343 37 20 37 Z"
-    fill="url(#facetHighlight)"
+    d="M48 16 V24 M44 20 H52"
+    stroke="#ffffff"
+    stroke-width="3"
+    stroke-linecap="round"
   />
 
-  <!-- Futuristic AI Luminary Sparkle (Top-Right High-Precision 4-Point Star) -->
-  <path
-    d="M45 12 C45 18 48.5 21.5 54.5 21.5 C48.5 21.5 45 25 45 31 C45 25 41.5 21.5 35.5 21.5 C41.5 21.5 45 18 45 12 Z"
-    fill="#ffffff"
-  />
-
-  <!-- Micro AI Light Core Accent -->
-  <circle cx="45" cy="21.5" r="2" fill="#7dd3fc" />
+  <!-- Bottom-Left Small Dot -->
+  <circle cx="18" cy="46" r="2.5" fill="#ffffff" />
 </svg>
