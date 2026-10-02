@@ -66,6 +66,7 @@ export function PipelineEngagementSection({
     "3m": "Monthly intake velocity (Last 3 months)",
     "6m": "Monthly intake velocity (Last 6 months)",
     "12m": "Quarterly intake pacing (Last 12 months)",
+    "all": "Year-over-year annual performance (All-time)",
   }[dateRange] || "Lead intake velocity";
 
   return (
@@ -83,6 +84,8 @@ export function PipelineEngagementSection({
                 ? "Weekly cadence"
                 : dateRange === "12m"
                 ? "Quarterly cadence"
+                : dateRange === "all"
+                ? "Annual cadence"
                 : "Monthly cadence"}
             </Badge>
           }
@@ -91,7 +94,7 @@ export function PipelineEngagementSection({
           <ResponsiveContainer width="100%" height={260}>
             <BarChart
               data={trend}
-              barCategoryGap={dateRange === "12m" || dateRange === "1m" ? "32%" : "26%"}
+              barCategoryGap={dateRange === "12m" || dateRange === "1m" || dateRange === "all" ? "32%" : "26%"}
               margin={{ top: 38, right: 10, left: -15, bottom: 0 }}
             >
               <CartesianGrid vertical={false} stroke="#e8eef3" strokeDasharray="4 4" />
@@ -113,7 +116,7 @@ export function PipelineEngagementSection({
               <Bar
                 dataKey="leads"
                 radius={[10, 10, 10, 10]}
-                maxBarSize={dateRange === "12m" || dateRange === "1m" ? 52 : 38}
+                maxBarSize={dateRange === "all" ? 58 : dateRange === "12m" || dateRange === "1m" ? 52 : 38}
                 label={renderPeak}
               >
                 {trend.map((t, i) => (

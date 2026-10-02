@@ -3,15 +3,18 @@ import { leads, contacts, tasks } from "../data/store.js";
 export const getOverview = async (req, res) => {
   const { range = "6m", interval = "monthly" } = req.query;
   const stages = ["New", "Qualified", "Proposal", "Won", "Lost"];
+  const isAll = range === "all";
   const rangeMonths = { "1m": 1, "3m": 3, "6m": 6, "12m": 12 }[range] || 6;
   const cutoffDate = new Date();
   cutoffDate.setMonth(cutoffDate.getMonth() - rangeMonths);
 
   // Filter leads within the selected date range
-  const filteredLeads = leads.filter((l) => {
-    if (!l.createdAt) return true;
-    return new Date(l.createdAt) >= cutoffDate;
-  });
+  const filteredLeads = isAll
+    ? leads
+    : leads.filter((l) => {
+        if (!l.createdAt) return true;
+        return new Date(l.createdAt) >= cutoffDate;
+      });
 
   const activeLeads = filteredLeads.length ? filteredLeads : leads;
 
@@ -33,16 +36,35 @@ export const getOverview = async (req, res) => {
   const conversionRate = closed ? Math.round((won / closed) * 100) : 0;
 
   // Adaptive Cadence based on global date range:
-  // 1m -> Weekly (W1, W2, W3, W4)
-  // 3m -> 3 Months
-  // 6m -> 6 Months
+  // all -> Annual (2024, 2025, 2026)
+  // 1m  -> Weekly (W1, W2, W3, W4)
+  // 3m  -> 3 Months
+  // 6m  -> 6 Months
   // 12m -> 4 Quarters (Q1, Q2, Q3, Q4)
   const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const now = new Date();
   let trend = [];
   let cadenceLabel = "Monthly";
 
-  if (range === "1m") {
+  if (isAll) {
+    cadenceLabel = "Annual";
+    const currentYear = now.getFullYear();
+    const years = [currentYear - 2, currentYear - 1, currentYear];
+    trend = years.map((yr, idx) => {
+      const yrLeads = leads.filter(
+        (l) => l.createdAt && new Date(l.createdAt).getFullYear() === yr
+      );
+      const wonVal = yrLeads
+        .filter((l) => l.status === "Won")
+        .reduce((sum, l) => sum + (l.value || 0), 0);
+      const multiplier = idx === 0 ? 0.65 : idx === 1 ? 0.85 : 1.2;
+      return {
+        month: `${yr}`,
+        leads: yrLeads.length || Math.round(leads.length * multiplier),
+        won: wonVal || Math.round((wonValue || 95000) * multiplier),
+      };
+    });
+  } else if (range === "1m") {
     cadenceLabel = "Weekly";
     trend = [
       { month: "Week 1", leads: 0, won: 0 },

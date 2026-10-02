@@ -45,6 +45,7 @@ export default function Dashboard() {
   /* ── Filtered leads for the selected dateRange ─────────────────── */
   const activeLeads = useMemo(() => {
     if (data?.filteredLeads?.length) return data.filteredLeads;
+    if (dateRange === "all") return allLeads;
     const rangeMonths = { "1m": 1, "3m": 3, "6m": 6, "12m": 12 }[dateRange] || 6;
     const cutoffTime = Date.now() - rangeMonths * 30 * 86400000;
     const filtered = allLeads.filter((l) => {
@@ -71,7 +72,10 @@ export default function Dashboard() {
   const rangeMonths = { "1m": 1, "3m": 3, "6m": 6, "12m": 12 }[dateRange] || 6;
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth() - (rangeMonths - 1), 1);
-  const rangeLabel = `${format(start, "dd MMM")} – ${format(today, "dd MMM, yyyy")}`;
+  const rangeLabel =
+    dateRange === "all"
+      ? "All-Time Historical"
+      : `${format(start, "dd MMM")} – ${format(today, "dd MMM, yyyy")}`;
 
   return (
     <div className="space-y-6">
@@ -90,9 +94,9 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {/* Global Date Range Selector: 1M / 3M / 6M / 1Y */}
+          {/* Global Date Range Selector: 1M / 3M / 6M / 1Y / ALL */}
           <div className="flex items-center gap-1 rounded-full bg-surface p-1 shadow-[var(--shadow-soft)] border border-line">
-            {["1m", "3m", "6m", "12m"].map((r) => (
+            {["1m", "3m", "6m", "12m", "all"].map((r) => (
               <button
                 key={r}
                 onClick={() => setDateRange(r)}

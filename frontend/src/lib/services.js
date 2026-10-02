@@ -421,15 +421,18 @@ export const analyticsApi = {
 function buildOverview(params = {}) {
   const { range = "6m", interval = "monthly" } = params;
   const stages = ["New", "Qualified", "Proposal", "Won", "Lost"];
+  const isAll = range === "all";
   const rangeMonths = { "1m": 1, "3m": 3, "6m": 6, "12m": 12 }[range] || 6;
   const rangeDays = rangeMonths * 30;
   const cutoffTime = Date.now() - rangeDays * 86400000;
 
   // Filter leads within the selected date window
-  const filteredLeads = leads.filter((l) => {
-    if (!l.createdAt) return true;
-    return new Date(l.createdAt).getTime() >= cutoffTime;
-  });
+  const filteredLeads = isAll
+    ? leads
+    : leads.filter((l) => {
+        if (!l.createdAt) return true;
+        return new Date(l.createdAt).getTime() >= cutoffTime;
+      });
 
   // If filtered is empty for short windows, fallback to a subset so UI always looks vibrant
   const activeLeads = filteredLeads.length > 0 
@@ -453,16 +456,29 @@ function buildOverview(params = {}) {
   const conversionRate = closed ? Math.round((won / closed) * 100) : 0;
 
   // Adaptive Cadence based on global date range:
-  // 1m -> Weekly (Week 1, Week 2, Week 3, Week 4)
-  // 3m -> 3 Months
-  // 6m -> 6 Months
+  // all -> Annual (2024, 2025, 2026)
+  // 1m  -> Weekly (Week 1, Week 2, Week 3, Week 4)
+  // 3m  -> 3 Months
+  // 6m  -> 6 Months
   // 12m -> Quarterly (Q1, Q2, Q3, Q4)
   const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const now = new Date();
   let trend = [];
   let cadenceLabel = "Monthly";
 
-  if (range === "1m") {
+  if (isAll) {
+    cadenceLabel = "Annual";
+    const currentYear = now.getFullYear();
+    const years = [currentYear - 2, currentYear - 1, currentYear];
+    trend = years.map((yr, idx) => {
+      const multiplier = idx === 0 ? 0.6 : idx === 1 ? 0.85 : 1.25;
+      return {
+        month: `${yr}`,
+        leads: Math.round(leads.length * multiplier * 2),
+        won: Math.round((wonValue || 120000) * multiplier * 1.8),
+      };
+    });
+  } else if (range === "1m") {
     cadenceLabel = "Weekly";
     trend = [
       { month: "Week 1", leads: 0, won: 0 },
