@@ -1,23 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <defs>
-    <!-- Rich Vibrant Blue Gradient -->
-    <linearGradient id="solidBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#0284c7" />
-      <stop offset="100%" stopColor="#0369a1" />
-    </linearGradient>
-
-    <!-- Subtle Drop Shadow -->
-    <filter id="shadow" x="-10%" y="-10%" width="125%" height="125%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#082f49" flood-opacity="0.3" />
-    </filter>
-  </defs>
-
-  <!-- Solid Rich Blue Squircle Canvas -->
-  <rect width="64" height="64" rx="16" fill="url(#solidBlue)" filter="url(#shadow)" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Solid High-Visibility Royal Electric Blue Background (No filters so browsers render 100% true blue) -->
+  <rect width="64" height="64" rx="16" fill="#0284c7" />
 
   <!-- Stylized Lumen "L" in Pure White -->
   <path
-    d="M19 15 C19 13.343 20.343 12 22 12 C23.657 12 25 13.343 25 15 V40 C25 41.105 25.895 42 27 42 H44 C45.657 42 47 43.343 47 45 C47 46.657 45.657 48 44 48 H23 C20.791 48 19 46.209 19 44 Z"
+    d="M19 14 C19 12.343 20.343 11 22 11 C23.657 11 25 12.343 25 14 V40 C25 41.105 25.895 42 27 42 H44 C45.657 42 47 43.343 47 45 C47 46.657 45.657 48 44 48 H23 C20.791 48 19 46.209 19 44 Z"
     fill="#ffffff"
   />
 
