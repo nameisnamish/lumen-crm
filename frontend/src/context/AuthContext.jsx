@@ -10,20 +10,29 @@ const AuthContext = createContext(null);
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // true until session is resolved
+  const [loading, setLoading] = useState(() => Boolean(localStorage.getItem(TOKEN_KEY)));
 
   // On mount, attempt to restore the session from a stored token.
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return;
+
+    let active = true;
     authApi
       .me()
-      .then((res) => setUser(res.user))
-      .catch(() => localStorage.removeItem(TOKEN_KEY))
-      .finally(() => setLoading(false));
+      .then((res) => {
+        if (active) setUser(res.user);
+      })
+      .catch(() => {
+        if (active) localStorage.removeItem(TOKEN_KEY);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const persist = (res) => {

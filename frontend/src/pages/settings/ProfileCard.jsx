@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { User, Mail, Upload, Trash2 } from "lucide-react";
 import {
@@ -14,6 +15,7 @@ import {
   Avatar,
 } from "../../components/ui";
 import { authApi } from "../../lib/services";
+import { profileSchema } from "../../lib/validation";
 import { cn } from "../../lib/utils";
 
 function SectionIcon({ icon: Icon, className }) {
@@ -36,11 +38,18 @@ export function ProfileCard({ user, updateUser }) {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({
+    resolver: zodResolver(profileSchema),
+    mode: "onChange",
+  });
 
-  const currentAvatar = watch("avatar", user?.avatar || "");
+  const currentAvatar = useWatch({
+    control,
+    name: "avatar",
+    defaultValue: user?.avatar || "",
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -149,7 +158,7 @@ export function ProfileCard({ user, updateUser }) {
             >
               <Input
                 placeholder="Your full name"
-                {...register("name", { required: "Name is required" })}
+                {...register("name")}
               />
             </Field>
 

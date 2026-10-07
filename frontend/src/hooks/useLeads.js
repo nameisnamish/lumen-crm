@@ -16,12 +16,17 @@ export function useLeads() {
   const sortKey = searchParams.get("sort") || "updatedAt";
   const sortDir = searchParams.get("dir") || "desc";
 
+  // Pagination params (default 10, page 1)
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const rawPageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+  const pageSize = [10, 25, 50].includes(rawPageSize) ? rawPageSize : 10;
+
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
       const res = await leadsApi.list();
       setLeads(res.leads || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch leads");
       setLeads([]);
     } finally {
@@ -30,13 +35,34 @@ export function useLeads() {
   }, []);
 
   useEffect(() => {
-    fetchLeads();
-  }, [fetchLeads]);
+    let active = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await leadsApi.list();
+        if (active) setLeads(res.leads || []);
+      } catch {
+        if (active) {
+          toast.error("Failed to fetch leads");
+          setLeads([]);
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const updateFilters = useCallback(
     (updates) => {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
+        const isFilterChange = Object.keys(updates).some(
+          (k) => k !== "page" && k !== "pageSize"
+        );
+
         Object.entries(updates).forEach(([k, v]) => {
           if (v) {
             next.set(k, v);
@@ -44,6 +70,12 @@ export function useLeads() {
             next.delete(k);
           }
         });
+
+        // Reset to page 1 whenever filters change, unless page was explicitly provided in updates
+        if (isFilterChange && !("page" in updates)) {
+          next.set("page", "1");
+        }
+
         return next;
       });
     },
@@ -79,6 +111,28 @@ export function useLeads() {
       });
   }, [leads, statusFilter, priorityFilter, sourceFilter, searchQuery, sortKey, sortDir]);
 
+  // Client-side pagination slicing
+  const totalFiltered = filteredLeads.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
+  const paginatedLeads = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredLeads.slice(start, start + pageSize);
+  }, [filteredLeads, page, pageSize]);
+
+  const setPage = useCallback(
+    (newPage) => {
+      updateFilters({ page: String(newPage) });
+    },
+    [updateFilters]
+  );
+
+  const setPageSize = useCallback(
+    (newSize) => {
+      updateFilters({ pageSize: String(newSize), page: "1" });
+    },
+    [updateFilters]
+  );
+
   const createLead = async (data) => {
     const res = await leadsApi.create(data);
     if (res.success) {
@@ -109,6 +163,13 @@ export function useLeads() {
   return {
     leads,
     filteredLeads,
+    paginatedLeads,
+    totalFiltered,
+    page,
+    pageSize,
+    totalPages,
+    setPage,
+    setPageSize,
     loading,
     filters: {
       status: statusFilter,

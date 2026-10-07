@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button, Dialog, Textarea, Select, Field } from "../../components/ui";
 import { notesApi } from "../../lib/services";
+import { noteSchema } from "../../lib/validation";
 
 export function NoteFormDialog({ open, onClose, note, leads, onSaved }) {
   const isEditing = Boolean(note);
@@ -12,7 +14,10 @@ export function NoteFormDialog({ open, onClose, note, leads, onSaved }) {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({
+    resolver: zodResolver(noteSchema),
+    mode: "onChange",
+  });
 
   // Reset form whenever the dialog opens or the note being edited changes
   useEffect(() => {
@@ -61,7 +66,7 @@ export function NoteFormDialog({ open, onClose, note, leads, onSaved }) {
           <Textarea
             rows={6}
             placeholder="Write your note here…"
-            {...register("content", { required: "Note content is required." })}
+            {...register("content")}
           />
         </Field>
 

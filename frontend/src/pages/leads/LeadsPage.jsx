@@ -4,6 +4,7 @@ import { PageHeader } from "../../components/common/PageHeader";
 import { EmptyState } from "../../components/common/EmptyState";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
 import { LeadFormDialog } from "../../components/leads/LeadFormDialog";
+import { LeadWizardDialog } from "../../components/leads/LeadWizardDialog";
 import { Card, Button, Spinner } from "../../components/ui";
 import { useLeads } from "../../hooks/useLeads";
 import { currency } from "../../lib/format";
@@ -17,6 +18,13 @@ export default function LeadsPage() {
   const {
     leads,
     filteredLeads,
+    paginatedLeads,
+    totalFiltered,
+    page,
+    pageSize,
+    totalPages,
+    setPage,
+    setPageSize,
     loading,
     filters,
     sort,
@@ -24,16 +32,15 @@ export default function LeadsPage() {
     createLead,
     updateLead,
     deleteLead,
-    refetch,
   } = useLeads();
 
   const [selected, setSelected] = useState(() => new Set());
   const [view, setView] = useState("table");
 
-  const [formOpen, setFormOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [toDelete, setToDelete] = useState(null);
-  const [bulkOpen, setBulkOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const stageCounts = useMemo(() => {
@@ -76,14 +83,9 @@ export default function LeadsPage() {
   const toggleAll = () =>
     setSelected(allSelected ? new Set() : new Set(filteredLeads.map((l) => l._id)));
 
-  const handleSaveLead = async (data) => {
-    if (editing) {
-      await updateLead(editing._id, data);
-    } else {
-      await createLead(data);
-    }
-    setFormOpen(false);
-    setEditing(null);
+  const handleEditLead = (lead) => {
+    setEditing(lead);
+    setEditOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -141,7 +143,7 @@ export default function LeadsPage() {
         <Button variant="outline" onClick={exportCSV}>
           <Download className="h-4 w-4" /> Export
         </Button>
-        <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+        <Button onClick={() => setWizardOpen(true)}>
           <Plus className="h-4 w-4" /> Add lead
         </Button>
       </PageHeader>
@@ -190,7 +192,7 @@ export default function LeadsPage() {
             title="No leads found"
             description="Try adjusting your filters or add your first lead."
             action={
-              <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+              <Button onClick={() => setWizardOpen(true)}>
                 <Plus className="h-4 w-4" /> Add lead
               </Button>
             }
@@ -198,32 +200,95 @@ export default function LeadsPage() {
         </Card>
       ) : view === "grid" ? (
         <LeadsCardGrid
-          leads={filteredLeads}
+          leads={paginatedLeads}
           selected={selected}
           onToggleRow={toggleRow}
-          onEdit={(lead) => { setEditing(lead); setFormOpen(true); }}
+          onEdit={handleEditLead}
           onDelete={setToDelete}
         />
       ) : (
         <LeadsTable
-          leads={filteredLeads}
+          leads={paginatedLeads}
           selected={selected}
           onToggleRow={toggleRow}
           onToggleAll={toggleAll}
           allSelected={allSelected}
           sort={sort}
           onSort={toggleSort}
-          onEdit={(lead) => { setEditing(lead); setFormOpen(true); }}
+          onEdit={handleEditLead}
           onDelete={setToDelete}
         />
       )}
 
-      {formOpen && (
+      {/* Pagination Bar */}
+      {totalFiltered > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-line bg-surface p-4 text-xs shadow-xs">
+          <div className="flex items-center gap-3 text-ink-soft">
+            <span>
+              Showing <strong className="text-ink font-semibold">{totalFiltered === 0 ? 0 : (page - 1) * pageSize + 1}</strong>–
+              <strong className="text-ink font-semibold">{Math.min(page * pageSize, totalFiltered)}</strong> of{" "}
+              <strong className="text-ink font-semibold">{totalFiltered}</strong> leads
+            </span>
+            <span className="hidden sm:inline">·</span>
+            <div className="flex items-center gap-1.5">
+              <span>Per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="rounded-lg border border-line bg-surface px-2 py-1 text-xs font-semibold text-ink focus:border-brand-500 focus:outline-none cursor-pointer"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+              className="text-xs"
+            >
+              Previous
+            </Button>
+            <span className="text-xs font-medium text-ink px-2">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+              className="text-xs"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {wizardOpen && (
+        <LeadWizardDialog
+          open={wizardOpen}
+          onClose={() => setWizardOpen(false)}
+          onSaved={createLead}
+        />
+      )}
+
+      {editOpen && (
         <LeadFormDialog
-          open={formOpen}
-          onClose={() => setFormOpen(false)}
-          onSubmit={handleSaveLead}
-          initialData={editing}
+          open={editOpen}
+          onClose={() => {
+            setEditOpen(false);
+            setEditing(null);
+          }}
+          lead={editing}
+          onSaved={updateLead}
         />
       )}
 

@@ -27,12 +27,23 @@ export default function NotesPage() {
   // ── Fetch ─────────────────────────────────────────────────────────────────
   const load = () => {
     setNotes(null);
-    notesApi.list().then((res) => setNotes(res.notes)).catch(() => setNotes([]));
+    notesApi.list().then((res) => setNotes(res.notes || [])).catch(() => setNotes([]));
   };
 
   useEffect(() => {
-    load();
-    leadsApi.list().then((res) => setLeads(res.leads ?? [])).catch(() => {});
+    let active = true;
+    notesApi.list().then((res) => {
+      if (active) setNotes(res.notes || []);
+    }).catch(() => {
+      if (active) setNotes([]);
+    });
+    leadsApi.list().then((res) => {
+      if (active) setLeads(res.leads ?? []);
+    }).catch(() => {});
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // ── KPI counts (stable — independent of active filter) ───────────────────

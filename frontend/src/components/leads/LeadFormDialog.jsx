@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Dialog, Button, Field, Input, Select, Textarea } from "../ui";
 import { leadsApi } from "../../lib/services";
 import { LEAD_STAGES, LEAD_PRIORITIES, LEAD_SOURCES } from "../../lib/constants";
-import { NAME_VALIDATION_RULE } from "../../lib/validation";
+import { leadSchema } from "../../lib/validation";
 
 /**
  * Create / edit a lead. When `lead` is provided we're editing; otherwise
@@ -17,7 +18,10 @@ export function LeadFormDialog({ open, onClose, lead, onSaved }) {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    resolver: zodResolver(leadSchema),
+    mode: "onChange",
+  });
 
   // Reset the form whenever the target lead changes / dialog opens.
   useEffect(() => {
@@ -61,13 +65,13 @@ export function LeadFormDialog({ open, onClose, lead, onSaved }) {
           <Field label="Name" error={errors.name?.message} className="col-span-2">
             <Input
               placeholder="Contact name"
-              {...register("name", NAME_VALIDATION_RULE)}
+              {...register("name")}
             />
           </Field>
           <Field label="Company">
             <Input placeholder="Company" {...register("company")} />
           </Field>
-          <Field label="Email">
+          <Field label="Email" error={errors.email?.message}>
             <Input type="email" placeholder="email@company.com" {...register("email")} />
           </Field>
           <Field label="Phone">

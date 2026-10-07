@@ -17,7 +17,8 @@ import { Button, Card, Tabs, Spinner } from "../../components/ui";
 
 import { tasksApi, leadsApi } from "../../lib/services";
 import { cn } from "../../lib/utils";
-import { TaskRow, isTaskOverdue } from "./TaskRow";
+import { TaskRow } from "./TaskRow";
+import { isTaskOverdue } from "../../lib/taskUtils";
 import { TaskFormDialog } from "./TaskFormDialog";
 import { TaskProgressCard } from "./TaskProgressCard";
 
@@ -74,12 +75,23 @@ export default function TasksPage() {
   // ── Data loading ─────────────────────────────────────────────────────────
   const load = () => {
     setTasks(null);
-    tasksApi.list().then((res) => setTasks(res.tasks)).catch(() => setTasks([]));
+    tasksApi.list().then((res) => setTasks(res.tasks || [])).catch(() => setTasks([]));
   };
 
   useEffect(() => {
-    load();
-    leadsApi.list().then((res) => setLeads(res.leads)).catch(() => {});
+    let active = true;
+    tasksApi.list().then((res) => {
+      if (active) setTasks(res.tasks || []);
+    }).catch(() => {
+      if (active) setTasks([]);
+    });
+    leadsApi.list().then((res) => {
+      if (active) setLeads(res.leads || []);
+    }).catch(() => {});
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // ── KPI counts ───────────────────────────────────────────────────────────

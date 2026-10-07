@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button, Dialog, Input, Textarea, Select, Field } from "../../components/ui";
 import { tasksApi } from "../../lib/services";
 import { dateInputValue } from "../../lib/format";
 import { TASK_STATUSES, TASK_PRIORITIES } from "../../lib/constants";
+import { taskSchema } from "../../lib/validation";
 
 export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
   const isEdit = Boolean(task);
@@ -14,7 +16,10 @@ export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({
+    resolver: zodResolver(taskSchema),
+    mode: "onChange",
+  });
 
   // Reset form whenever the dialog opens or the target task changes.
   useEffect(() => {
@@ -77,7 +82,7 @@ export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
         <Field label="Title" error={errors.title?.message}>
           <Input
             placeholder="e.g. Follow up with Acme Corp"
-            {...register("title", { required: "Title is required" })}
+            {...register("title")}
           />
         </Field>
 

@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, NavLink, Outlet, useLocation } from "react-router-dom";
 import {
   Building2,
   Mail,
-  Phone,
-  DollarSign,
-  Calendar,
   ArrowLeft,
   Pencil,
   Trash2,
@@ -15,7 +12,6 @@ import {
   Activity,
   Layers,
 } from "lucide-react";
-import { PageHeader } from "../../components/common/PageHeader";
 import { Breadcrumbs } from "../../components/common/Breadcrumbs";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
 import { LeadFormDialog } from "../../components/leads/LeadFormDialog";
@@ -35,27 +31,41 @@ export default function LeadDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
-  const loadLead = async () => {
-    setLoading(true);
-    try {
-      const res = await leadsApi.get(leadId);
-      if (res.success && res.lead) {
-        setLead(res.lead);
-      } else {
-        setLead(null);
-      }
-    } catch (err) {
-      toast.error("Failed to load lead details");
-      setLead(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refetchLead = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    if (leadId) loadLead();
-  }, [leadId]);
+    let ignore = false;
+    if (!leadId) return;
+
+    async function fetchLead() {
+      try {
+        const res = await leadsApi.get(leadId);
+        if (!ignore) {
+          if (res.success && res.lead) {
+            setLead(res.lead);
+          } else {
+            setLead(null);
+          }
+        }
+      } catch {
+        if (!ignore) {
+          toast.error("Failed to load lead details");
+          setLead(null);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchLead();
+
+    return () => {
+      ignore = true;
+    };
+  }, [leadId, refreshKey]);
 
   const handleUpdate = async (data) => {
     const res = await leadsApi.update(leadId, data);
@@ -173,7 +183,7 @@ export default function LeadDetailPage() {
       </Card>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-line pb-2 overflow-x-auto">
+      <div className="flex gap-2 border-b border-line pb-2 overflow-x-auto no-scrollbar">
         {tabs.map((t) => {
           const Icon = t.icon;
           const isActive =
@@ -185,7 +195,7 @@ export default function LeadDetailPage() {
             <NavLink
               key={t.key}
               to={t.path}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
                 isActive
                   ? "bg-brand-500 text-white shadow-sm"
                   : "text-ink-soft hover:bg-surface-dark/5 hover:text-ink"
@@ -200,7 +210,7 @@ export default function LeadDetailPage() {
 
       {/* Child Route Context Output */}
       <div className="mt-4">
-        <Outlet context={{ lead, refetchLead: loadLead }} />
+        <Outlet context={{ lead, refetchLead }} />
       </div>
 
       {editOpen && (

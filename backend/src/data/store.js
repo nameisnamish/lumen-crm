@@ -1,11 +1,14 @@
+import bcrypt from "bcryptjs";
+
 export const users = [
   {
     id: "usr_101",
     name: "Alex Morgan",
-    email: "alex@quixotic.io",
+    email: "demo@lumencrm.com",
+    passwordHash: bcrypt.hashSync("demo1234", 10),
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
     role: "Sales Lead",
-    company: "Quixotic CRM Systems",
+    company: "Lumen CRM Systems",
   },
 ];
 

@@ -40,20 +40,12 @@ export default function DashboardPage() {
     tasksApi.list().then((res) => setTasks(res.tasks || [])).catch(() => {});
   }, []);
 
-  /* ── Filtered leads for the selected dateRange ─────────────────── */
   const activeLeads = useMemo(() => {
-    if (data?.filteredLeads?.length) return data.filteredLeads;
-    if (dateRange === "all") return allLeads;
-    const rangeMonths = { "1m": 1, "3m": 3, "6m": 6, "12m": 12 }[dateRange] || 6;
-    const cutoffTime = Date.now() - rangeMonths * 30 * 86400000;
-    const filtered = allLeads.filter((l) => {
-      if (!l.createdAt) return true;
-      return new Date(l.createdAt).getTime() >= cutoffTime;
-    });
-    return filtered.length > 0
-      ? filtered
-      : allLeads.slice(0, Math.max(3, Math.floor(allLeads.length * (rangeMonths / 12))));
-  }, [data, allLeads, dateRange]);
+    if (data?.filteredLeads?.length) {
+      return data.filteredLeads;
+    }
+    return allLeads;
+  }, [data, allLeads]);
 
   /* ── Weighted forecast calculation ──────────────────────────────── */
   const forecast = useMemo(() => {

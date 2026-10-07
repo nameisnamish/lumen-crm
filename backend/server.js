@@ -15,6 +15,11 @@ import { errorHandler } from "./src/middleware/errorHandler.js";
 
 dotenv.config();
 
+if (!process.env.JWT_SECRET) {
+  console.error("FATAL ERROR: JWT_SECRET environment variable is missing.");
+  process.exit(1);
+}
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 

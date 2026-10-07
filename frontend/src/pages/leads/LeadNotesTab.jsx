@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Plus, FileText, Trash2 } from "lucide-react";
-import { Card, Button, Input } from "../../components/ui";
+import { Plus, Trash2 } from "lucide-react";
+import { Card, Button } from "../../components/ui";
 import { notesApi } from "../../lib/services";
 import { relative } from "../../lib/format";
 import { toast } from "sonner";

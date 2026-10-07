@@ -12,8 +12,8 @@ export const generateLeadSummaryService = async (leadData) => {
 export const generateEmailService = async ({ leadName = "Valued Lead", company = "Company", purpose = "Introduction", tone = "Professional" }) => {
   return {
     success: true,
-    subject: `Transforming ${company}'s Sales Pipeline with Quixotic AI CRM`,
-    body: `Hi ${leadName},\n\nI hope this email finds you well. Given your leadership at ${company}, I wanted to reach out regarding our AI-driven CRM platform designed to streamline lead scoring, sales forecasting, and outreach automation.\n\nWould you have 15 minutes this week for a brief demo?\n\nBest regards,\nAlex Morgan\nQuixotic CRM Team`,
+    subject: `Transforming ${company}'s Sales Pipeline with Lumen CRM`,
+    body: `Hi ${leadName},\n\nI hope this email finds you well. Given your leadership at ${company}, I wanted to reach out regarding our AI-driven CRM platform designed to streamline lead scoring, sales forecasting, and outreach automation.\n\nWould you have 15 minutes this week for a brief demo?\n\nBest regards,\nAlex Morgan\nLumen CRM Team`,
   };
 };
 

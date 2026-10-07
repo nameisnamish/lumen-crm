@@ -2,6 +2,15 @@ import { leads } from "../data/store.js";
 
 const uid = () => "lead_" + Math.random().toString(36).slice(2, 9);
 
+export const checkLeadEmail = async (req, res) => {
+  const email = (req.query.email || "").trim().toLowerCase();
+  if (!email) {
+    return res.json({ success: true, exists: false });
+  }
+  const exists = leads.some((l) => l.email && l.email.toLowerCase() === email);
+  res.json({ success: true, exists });
+};
+
 export const getLeads = async (req, res) => {
   res.json({ success: true, count: leads.length, leads });
 };

@@ -152,6 +152,12 @@ The output artifacts will be written to the `frontend/dist` directory.
 
 ---
 
+## Attribution
+
+UI boilerplate based on the time-to-program ai-crm-dashboard tutorial.
+
+---
+
 ## License
 
 This project is licensed under the MIT License.

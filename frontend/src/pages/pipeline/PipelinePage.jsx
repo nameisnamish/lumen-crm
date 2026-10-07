@@ -7,8 +7,9 @@ import {
   useSensors,
   closestCorners,
 } from "@dnd-kit/core";
+import { Plus } from "lucide-react";
 import { PageHeader } from "../../components/common/PageHeader";
-import { Spinner } from "../../components/ui";
+import { Button, Spinner } from "../../components/ui";
 import { currency } from "../../lib/format";
 import { PIPELINE_STAGES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
@@ -17,6 +18,7 @@ import { DealCard } from "./DealCard";
 import { PipelineStats } from "./PipelineStats";
 import { PipelineToolbar } from "./PipelineToolbar";
 import { PipelineColumn } from "./PipelineColumn";
+import { LeadWizardDialog } from "../../components/leads/LeadWizardDialog";
 
 export default function PipelinePage() {
   const {
@@ -24,8 +26,10 @@ export default function PipelinePage() {
     moveDeal,
     reorderInColumn,
     persistBoard,
+    addDeal,
   } = usePipelineReducer();
 
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [density, setDensity] = useState("standard"); // "standard" | "fit"
@@ -155,7 +159,11 @@ export default function PipelinePage() {
       <PageHeader
         title="Pipeline"
         subtitle={`${allLeads.length} leads · ${currency(totalValue, { compact: true })} in play`}
-      />
+      >
+        <Button onClick={() => setWizardOpen(true)}>
+          <Plus className="h-4 w-4" /> Add lead
+        </Button>
+      </PageHeader>
 
       {/* KPI summary strip */}
       <PipelineStats
@@ -211,6 +219,16 @@ export default function PipelinePage() {
           {activeLead ? <DealCard lead={activeLead} overlay /> : null}
         </DragOverlay>
       </DndContext>
+
+      {wizardOpen && (
+        <LeadWizardDialog
+          open={wizardOpen}
+          onClose={() => setWizardOpen(false)}
+          onSaved={(newLead) => {
+            if (newLead) addDeal(newLead);
+          }}
+        />
+      )}
     </div>
   );
 }

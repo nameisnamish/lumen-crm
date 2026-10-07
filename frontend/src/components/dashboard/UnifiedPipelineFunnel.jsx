@@ -1,4 +1,4 @@
-import { Filter, ArrowUpRight, ArrowDownRight, Layers } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Layers } from "lucide-react";
 import { Card, SectionHeading } from "../ui";
 import { currency } from "../../lib/format";
 import { STAGE_STYLES } from "../../lib/constants";

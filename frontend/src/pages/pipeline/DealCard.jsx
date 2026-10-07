@@ -8,7 +8,7 @@ import { currency } from "../../lib/format";
 import { PRIORITY_STYLES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
 
-export const DealCard = memo(function DealCard({ lead, dragHandle, overlay, density }) {
+export const DealCard = memo(function DealCard({ lead, dragHandle, overlay }) {
   const [suggesting, setSuggesting] = useState(false);
   const cardRef = useRef(null);
 

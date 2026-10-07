@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { ArrowUpRight, Activity } from "lucide-react";
+import { Activity } from "lucide-react";
 import { Card, SectionHeading, Avatar } from "../ui";
 import { currency, shortDate, timeOf } from "../../lib/format";
 import { STAGE_STYLES } from "../../lib/constants";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Sparkles, Mail, Lightbulb, RefreshCw } from "lucide-react";
+import { Sparkles, Mail, RefreshCw } from "lucide-react";
 import { Card, Button, Spinner } from "../../components/ui";
 import { aiApi } from "../../lib/services";
 import { toast } from "sonner";

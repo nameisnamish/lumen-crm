@@ -14,9 +14,9 @@ const today = () => new Date().toISOString();
 export const mockUser = {
   id: "u1",
   name: "Alex Carter",
-  email: "alex@timetoprogram.com",
+  email: "demo@lumencrm.com",
   role: "owner",
-  company: "Lumen",
+  company: "Lumen CRM Systems",
   avatar: "",
   createdAt: daysAgo(240),
 };

@@ -47,22 +47,30 @@ export function CommandSearch() {
   // Focus input when opened
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-      setQuery("");
-      setResults(null);
-      setSelectedIndex(0);
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+        setQuery("");
+        setResults(null);
+        setSelectedIndex(0);
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [open]);
 
   // Search when deferred query changes
   useEffect(() => {
-    if (!deferredQuery.trim()) {
-      setResults(null);
-      return;
+    const q = deferredQuery.trim();
+    if (!q) {
+      const timer = setTimeout(() => setResults(null), 0);
+      return () => clearTimeout(timer);
     }
-    searchApi.query(deferredQuery).then((res) => {
-      setResults(res.results || {});
+    let active = true;
+    searchApi.query(q).then((res) => {
+      if (active) setResults(res.results || {});
     });
+    return () => {
+      active = false;
+    };
   }, [deferredQuery]);
 
   // Build flat list of all selectable items

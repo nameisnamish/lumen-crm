@@ -1,17 +1,13 @@
 import {
-  TrendingUp,
   Target,
   DollarSign,
   ArrowUpRight,
-  CreditCard,
   CheckCircle2,
-  PieChart as PieIcon,
   Sparkles,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
 import { Card, Badge } from "../ui";
 import { currency } from "../../lib/format";
-import { cn } from "../../lib/utils";
 
 export function KpiRibbon({ stats = {}, forecast = 0, trend = [], leadsCount = 0 }) {
   return (

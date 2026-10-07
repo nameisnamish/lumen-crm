@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { User, Mail, Lock, Building2 } from "lucide-react";
 import { AuthShell } from "./AuthShell";
 import { Button, Field, Input } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
-import {
-  NAME_VALIDATION_RULE,
-  EMAIL_VALIDATION_RULE,
-  PASSWORD_VALIDATION_RULE,
-} from "../../lib/validation";
+import { registerSchema } from "../../lib/validation";
 
 export default function Register() {
   const { register: registerUser } = useAuth();
@@ -21,7 +18,10 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    mode: "onChange",
+  });
 
   const onSubmit = async (data) => {
     setSubmitting(true);
@@ -50,7 +50,7 @@ export default function Register() {
             <Input
               placeholder="Sujon Ahmed"
               className="pl-9"
-              {...register("name", NAME_VALIDATION_RULE)}
+              {...register("name")}
             />
           </div>
         </Field>
@@ -73,7 +73,7 @@ export default function Register() {
               type="email"
               placeholder="you@company.com"
               className="pl-9"
-              {...register("email", EMAIL_VALIDATION_RULE)}
+              {...register("email")}
             />
           </div>
         </Field>
@@ -85,7 +85,7 @@ export default function Register() {
               type="password"
               placeholder="At least 6 characters"
               className="pl-9"
-              {...register("password", PASSWORD_VALIDATION_RULE)}
+              {...register("password")}
             />
           </div>
         </Field>

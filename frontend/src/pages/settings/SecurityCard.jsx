@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Lock, KeyRound } from "lucide-react";
 import {
@@ -12,6 +13,7 @@ import {
   Field,
 } from "../../components/ui";
 import { authApi } from "../../lib/services";
+import { passwordSchema } from "../../lib/validation";
 import { cn } from "../../lib/utils";
 
 function SectionIcon({ icon: Icon, className }) {
@@ -31,12 +33,12 @@ export function SecurityCard() {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm();
-
-  const newPassword = watch("password");
+  } = useForm({
+    resolver: zodResolver(passwordSchema),
+    mode: "onChange",
+  });
 
   const onSubmit = async ({ password }) => {
     try {
@@ -70,13 +72,7 @@ export function SecurityCard() {
                   type="password"
                   placeholder="Min. 6 characters"
                   className="pl-9"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: {
-                      value: 6,
-                      message: "Must be at least 6 characters",
-                    },
-                  })}
+                  {...register("password")}
                 />
               </div>
             </Field>
@@ -88,11 +84,7 @@ export function SecurityCard() {
               <Input
                 type="password"
                 placeholder="Re-enter password"
-                {...register("confirmPassword", {
-                  required: "Please confirm your password",
-                  validate: (v) =>
-                    v === newPassword || "Passwords do not match",
-                })}
+                {...register("confirmPassword")}
               />
             </Field>
           </div>

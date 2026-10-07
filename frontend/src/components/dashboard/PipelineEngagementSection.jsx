@@ -12,7 +12,6 @@ import {
   Cell,
 } from "recharts";
 import { Card, SectionHeading, Badge } from "../ui";
-import { SOURCE_COLORS } from "../../lib/constants";
 
 const DEFAULT_SOURCE_COLORS = ["#0ea5e9", "#38bdf8", "#0369a1", "#7dd3fc", "#0284c7", "#bae6fd"];
 
@@ -20,7 +19,6 @@ export function PipelineEngagementSection({
   trend = [],
   leads = [],
   dateRange = "6m",
-  cadence = "Monthly",
 }) {
   // Group leads by source
   const grouped = leads.reduce((acc, l) => {

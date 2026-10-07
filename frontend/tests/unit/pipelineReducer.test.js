@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { pipelineReducer, ACTIONS, toBoard } from "../../src/hooks/usePipelineReducer";
-import { PIPELINE_STAGES } from "../../src/lib/constants";
 
 describe("pipelineReducer", () => {
   const getMockLeads = () => [

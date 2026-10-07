@@ -1,20 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Plus, Search, Users, Star, Building2, Tag, LayoutGrid, Table2, X } from "lucide-react";
+import { Plus, Search, Users, X } from "lucide-react";
 import { PageHeader } from "../../components/common/PageHeader";
 import { EmptyState } from "../../components/common/EmptyState";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
-import { Card, Button, Input, Dialog, Spinner } from "../../components/ui";
+import { Card, Button, Spinner } from "../../components/ui";
 import { contactsApi } from "../../lib/services";
 import { ContactCard } from "./ContactCard";
 import { ContactPanel } from "./ContactPanel";
-import { TagEditor } from "./TagEditor";
+import { ContactFormDialog } from "./ContactFormDialog";
 import { toast } from "sonner";
 
 export default function ContactsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [contacts, setContacts] = useState(null);
-  const [view, setView] = useState("grid");
 
   const [activeContact, setActiveContact] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -22,14 +21,10 @@ export default function ContactsPage() {
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Form states
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", company: "", title: "", tags: [] });
-
   const searchQuery = searchParams.get("search") || "";
   const tagFilter = searchParams.get("tag") || "";
 
   const loadContacts = async () => {
-    setContacts(null);
     try {
       const res = await contactsApi.list();
       setContacts(res.contacts || []);
@@ -40,7 +35,21 @@ export default function ContactsPage() {
   };
 
   useEffect(() => {
-    loadContacts();
+    let active = true;
+    contactsApi
+      .list()
+      .then((res) => {
+        if (active) setContacts(res.contacts || []);
+      })
+      .catch(() => {
+        if (active) {
+          setContacts([]);
+          toast.error("Failed to fetch contacts");
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const updateFilters = (updates) => {
@@ -75,28 +84,6 @@ export default function ContactsPage() {
     return Array.from(set);
   }, [contacts]);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      if (editing) {
-        const res = await contactsApi.update(editing._id, formData);
-        if (res.success) {
-          toast.success("Contact updated");
-          loadContacts();
-        }
-      } else {
-        const res = await contactsApi.create(formData);
-        if (res.success) {
-          toast.success("Contact created");
-          loadContacts();
-        }
-      }
-      setFormOpen(false);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
   const handleToggleFavorite = async (id) => {
     const target = contacts.find((c) => c._id === id);
     if (!target) return;
@@ -120,20 +107,11 @@ export default function ContactsPage() {
 
   const openNew = () => {
     setEditing(null);
-    setFormData({ name: "", email: "", phone: "", company: "", title: "", tags: [] });
     setFormOpen(true);
   };
 
   const openEdit = (c) => {
     setEditing(c);
-    setFormData({
-      name: c.name || "",
-      email: c.email || "",
-      phone: c.phone || "",
-      company: c.company || "",
-      title: c.title || "",
-      tags: c.tags || [],
-    });
     setFormOpen(true);
   };
 
@@ -242,51 +220,15 @@ export default function ContactsPage() {
 
       {/* Add / Edit Dialog */}
       {formOpen && (
-        <Dialog open={formOpen} onClose={() => setFormOpen(false)} title={editing ? "Edit Contact" : "Add Contact"}>
-          <form onSubmit={handleSave} className="space-y-4">
-            <Input
-              label="Full Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-              <Input
-                label="Phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="Company"
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              />
-              <Input
-                label="Job Title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-ink-soft block mb-1.5">Tags</label>
-              <TagEditor tags={formData.tags} onChange={(tags) => setFormData({ ...formData, tags })} />
-            </div>
-            <div className="flex justify-end gap-2 pt-4 border-t border-line">
-              <Button variant="outline" type="button" onClick={() => setFormOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Save Contact</Button>
-            </div>
-          </form>
-        </Dialog>
+        <ContactFormDialog
+          open={formOpen}
+          onClose={() => {
+            setFormOpen(false);
+            setEditing(null);
+          }}
+          contact={editing}
+          onSaved={loadContacts}
+        />
       )}
 
       {/* Delete confirmation */}

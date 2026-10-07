@@ -56,10 +56,23 @@ export function NotificationsProvider({ children }) {
 
   // Initial fetch + polling with cleanup on unmount
   useEffect(() => {
-    fetchNotifications();
+    let active = true;
+    (async () => {
+      try {
+        const res = await notificationsApi.list();
+        if (active && res.success) {
+          setNotifications(res.notifications || []);
+          setUnreadCount(res.unreadCount || 0);
+        }
+      } catch {
+        // silently fail on polling errors
+      }
+    })();
+
     intervalRef.current = setInterval(fetchNotifications, POLL_INTERVAL);
 
     return () => {
+      active = false;
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;

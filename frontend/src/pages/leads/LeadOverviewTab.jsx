@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Building2, Mail, Phone, Calendar, Tag, ShieldAlert } from "lucide-react";
+import { Building2, Mail, Calendar, Tag, ShieldAlert } from "lucide-react";
 import { Card, Badge } from "../../components/ui";
 import { currency, date } from "../../lib/format";
 

@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { CalendarClock, AlertTriangle, Clock, Plus } from "lucide-react";
+import { CalendarClock, AlertTriangle, Clock } from "lucide-react";
 import { isPast } from "date-fns";
 import { Card, SectionHeading, Badge } from "../ui";
 import { shortDate } from "../../lib/format";

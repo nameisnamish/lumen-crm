@@ -1,4 +1,4 @@
-import { Trophy, Building2, ArrowUpRight } from "lucide-react";
+import { Trophy, Building2 } from "lucide-react";
 import { Card, SectionHeading } from "../ui";
 import { currency } from "../../lib/format";
 import { STAGE_STYLES } from "../../lib/constants";

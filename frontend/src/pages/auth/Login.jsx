@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { AuthShell } from "./AuthShell";
 import { Button, Field, Input } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
+import { loginSchema } from "../../lib/validation";
 
 export default function Login() {
   const { login } = useAuth();
@@ -18,7 +20,10 @@ export default function Login() {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({ defaultValues: { email: "", password: "" } });
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const onSubmit = async (data) => {
     setSubmitting(true);
@@ -35,8 +40,8 @@ export default function Login() {
 
   // Convenience: pre-fill the seeded demo credentials.
   const useDemo = () => {
-    setValue("email", "alex@timetoprogram.com");
-    setValue("password", "Test@1234");
+    setValue("email", "demo@lumencrm.com");
+    setValue("password", "demo1234");
   };
 
   return (
@@ -54,7 +59,7 @@ export default function Login() {
               type="email"
               placeholder="you@company.com"
               className="pl-9"
-              {...register("email", { required: "Email is required" })}
+              {...register("email")}
             />
           </div>
         </Field>
@@ -66,7 +71,7 @@ export default function Login() {
               type="password"
               placeholder="••••••••"
               className="pl-9"
-              {...register("password", { required: "Password is required" })}
+              {...register("password")}
             />
           </div>
         </Field>

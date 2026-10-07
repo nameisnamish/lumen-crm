@@ -12,12 +12,16 @@ export const protect = (req, res, next) => {
     return res.status(401).json({ success: false, message: "Unauthorized - Missing or invalid token" });
   }
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    return res.status(500).json({ success: false, message: "Server misconfiguration: JWT_SECRET missing" });
+  }
+
   try {
-    const secret = process.env.JWT_SECRET || "ai_crm_dashboard_super_secret_jwt_key_2026";
     const decoded = jwt.verify(token, secret);
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ success: false, message: "Unauthorized - Token verification failed" });
   }
 };

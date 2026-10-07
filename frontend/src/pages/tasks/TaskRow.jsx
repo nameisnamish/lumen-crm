@@ -1,4 +1,4 @@
-import { isPast, isToday } from "date-fns";
+import { isToday } from "date-fns";
 import {
   MoreHorizontal,
   Pencil,
@@ -14,18 +14,7 @@ import { Badge, Dropdown, DropdownItem } from "../../components/ui";
 import { shortDate } from "../../lib/format";
 import { TASK_STATUS_STYLES, PRIORITY_STYLES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
-
-const PRIORITY_BAR = {
-  High: "bg-rose-400",
-  Medium: "bg-amber-400",
-  Low: "bg-slate-300",
-};
-
-export function isTaskOverdue(task) {
-  if (!task.dueDate || task.status === "Completed") return false;
-  const d = new Date(task.dueDate);
-  return isPast(d) && !isToday(d);
-}
+import { PRIORITY_BAR, isTaskOverdue } from "../../lib/taskUtils";
 
 export function TaskRow({ task, onToggle, onEdit, onDelete }) {
   const done = task.status === "Completed";

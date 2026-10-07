@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, UserCheck, Users, CheckSquare, FileText, Loader2, X, Command } from "lucide-react";
+import { Search, UserCheck, Users, CheckSquare, FileText, Loader2, X } from "lucide-react";
 import { searchApi } from "../../lib/services";
 import { useKeyboardShortcut } from "../../hooks/useKeyboardShortcut";
 import { cn } from "../../lib/utils";
@@ -36,15 +36,16 @@ export function GlobalSearch({ className, placeholder = "Search leads, contacts,
   useEffect(() => {
     const q = query.trim();
     if (!q) {
-      setResults({ leads: [], contacts: [], tasks: [], notes: [] });
-      setOpen(false);
-      return;
+      const resetTimer = setTimeout(() => {
+        setResults({ leads: [], contacts: [], tasks: [], notes: [] });
+        setOpen(false);
+      }, 0);
+      return () => clearTimeout(resetTimer);
     }
 
-    setLoading(true);
-    setOpen(true);
-
     const timer = setTimeout(() => {
+      setLoading(true);
+      setOpen(true);
       searchApi
         .query(q)
         .then((res) => {

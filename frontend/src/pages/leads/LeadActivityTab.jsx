@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Activity, CheckCircle, Mail, Phone, Sparkles } from "lucide-react";
+import { Activity, CheckCircle, Mail } from "lucide-react";
 import { Card } from "../../components/ui";
 import { relative } from "../../lib/format";
 
