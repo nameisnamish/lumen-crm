@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Dialog, Button, Field, Input } from "../../components/ui";
 import { contactsApi } from "../../lib/services";
-import { contactSchema } from "../../lib/validation";
+import { contactSchema, sanitizeNameInput, sanitizePhoneInput } from "../../lib/validation";
 import { TagEditor } from "./TagEditor";
 
 export function ContactFormDialog({ open, onClose, contact, onSaved }) {
@@ -33,16 +33,15 @@ export function ContactFormDialog({ open, onClose, contact, onSaved }) {
   const tags = useWatch({ control, name: "tags", defaultValue: [] });
 
   useEffect(() => {
-    if (open) {
-      reset({
-        name: contact?.name || "",
-        email: contact?.email || "",
-        phone: contact?.phone || "",
-        company: contact?.company || "",
-        title: contact?.title || "",
-        tags: contact?.tags || [],
-      });
-    }
+    if (!open) return;
+    reset({
+      name: contact?.name || "",
+      email: contact?.email || "",
+      phone: contact?.phone || "",
+      company: contact?.company || "",
+      title: contact?.title || "",
+      tags: contact?.tags || [],
+    });
   }, [open, contact, reset]);
 
   const onSubmit = async (data) => {
@@ -76,24 +75,45 @@ export function ContactFormDialog({ open, onClose, contact, onSaved }) {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Field label="Full Name *" error={errors.name?.message}>
-          <Input placeholder="e.g. Alex Morgan" {...register("name")} />
+          <Input
+            placeholder="e.g. Alex Morgan"
+            maxLength={50}
+            {...register("name", {
+              onChange: (e) => {
+                e.target.value = sanitizeNameInput(e.target.value);
+              },
+            })}
+          />
         </Field>
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Email" error={errors.email?.message}>
-            <Input type="email" placeholder="alex@company.com" {...register("email")} />
+            <Input
+              type="email"
+              placeholder="alex@company.com"
+              maxLength={100}
+              {...register("email")}
+            />
           </Field>
           <Field label="Phone" error={errors.phone?.message}>
-            <Input placeholder="+1 555 0199" {...register("phone")} />
+            <Input
+              placeholder="+1 555 0199"
+              maxLength={20}
+              {...register("phone", {
+                onChange: (e) => {
+                  e.target.value = sanitizePhoneInput(e.target.value);
+                },
+              })}
+            />
           </Field>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Company" error={errors.company?.message}>
-            <Input placeholder="Company name" {...register("company")} />
+            <Input placeholder="Company name" maxLength={100} {...register("company")} />
           </Field>
           <Field label="Job Title" error={errors.title?.message}>
-            <Input placeholder="e.g. VP of Sales" {...register("title")} />
+            <Input placeholder="e.g. VP of Sales" maxLength={100} {...register("title")} />
           </Field>
         </div>
 

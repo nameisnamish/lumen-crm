@@ -1,4 +1,5 @@
 import { contacts } from "../data/store.js";
+import { validateContactPayload } from "../middleware/validate.js";
 
 const uid = () => "cnt_" + Math.random().toString(36).slice(2, 9);
 
@@ -13,6 +14,11 @@ export const getContactById = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
+  const errors = validateContactPayload(req.body, false);
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors.join(". ") });
+  }
+
   const newContact = {
     _id: uid(),
     tags: [],
@@ -27,6 +33,11 @@ export const createContact = async (req, res) => {
 export const updateContact = async (req, res) => {
   const index = contacts.findIndex((c) => c._id === req.params.id);
   if (index === -1) return res.status(404).json({ success: false, message: "Contact not found" });
+
+  const errors = validateContactPayload(req.body, true);
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors.join(". ") });
+  }
 
   contacts[index] = { ...contacts[index], ...req.body };
   res.json({ success: true, contact: contacts[index] });

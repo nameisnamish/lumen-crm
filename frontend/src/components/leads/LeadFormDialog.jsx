@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Dialog, Button, Field, Input, Select, Textarea } from "../ui";
 import { leadsApi } from "../../lib/services";
 import { LEAD_STAGES, LEAD_PRIORITIES, LEAD_SOURCES } from "../../lib/constants";
-import { leadSchema } from "../../lib/validation";
+import { leadSchema, sanitizeNameInput, sanitizePhoneInput } from "../../lib/validation";
 
 /**
  * Create / edit a lead. When `lead` is provided we're editing; otherwise
@@ -62,47 +62,60 @@ export function LeadFormDialog({ open, onClose, lead, onSaved }) {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Name" error={errors.name?.message} className="col-span-2">
+          <Field label="Name *" error={errors.name?.message} className="col-span-2">
             <Input
               placeholder="Contact name"
-              {...register("name")}
+              maxLength={50}
+              {...register("name", {
+                onChange: (e) => {
+                  e.target.value = sanitizeNameInput(e.target.value);
+                },
+              })}
             />
           </Field>
-          <Field label="Company">
-            <Input placeholder="Company" {...register("company")} />
+          <Field label="Company" error={errors.company?.message}>
+            <Input placeholder="Company" maxLength={100} {...register("company")} />
           </Field>
           <Field label="Email" error={errors.email?.message}>
-            <Input type="email" placeholder="email@company.com" {...register("email")} />
+            <Input type="email" placeholder="email@company.com" maxLength={100} {...register("email")} />
           </Field>
-          <Field label="Phone">
-            <Input placeholder="+1 555 0100" {...register("phone")} />
+          <Field label="Phone" error={errors.phone?.message}>
+            <Input
+              placeholder="+1 555 0100"
+              maxLength={20}
+              {...register("phone", {
+                onChange: (e) => {
+                  e.target.value = sanitizePhoneInput(e.target.value);
+                },
+              })}
+            />
           </Field>
-          <Field label="Deal value (USD)">
-            <Input type="number" min="0" placeholder="0" {...register("value")} />
+          <Field label="Deal value (USD)" error={errors.value?.message}>
+            <Input type="number" min="0" max="1000000000" placeholder="0" {...register("value")} />
           </Field>
-          <Field label="Stage">
+          <Field label="Stage" error={errors.status?.message}>
             <Select {...register("status")}>
               {LEAD_STAGES.map((s) => (
                 <option key={s}>{s}</option>
               ))}
             </Select>
           </Field>
-          <Field label="Priority">
+          <Field label="Priority" error={errors.priority?.message}>
             <Select {...register("priority")}>
               {LEAD_PRIORITIES.map((p) => (
                 <option key={p}>{p}</option>
               ))}
             </Select>
           </Field>
-          <Field label="Source" className="col-span-2">
+          <Field label="Source" error={errors.source?.message} className="col-span-2">
             <Select {...register("source")}>
               {LEAD_SOURCES.map((s) => (
                 <option key={s}>{s}</option>
               ))}
             </Select>
           </Field>
-          <Field label="Notes" className="col-span-2">
-            <Textarea placeholder="Context, next steps…" {...register("notes")} />
+          <Field label="Notes" error={errors.notes?.message} className="col-span-2">
+            <Textarea placeholder="Context, next steps…" maxLength={2000} {...register("notes")} />
           </Field>
         </div>
 

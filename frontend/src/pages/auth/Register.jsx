@@ -7,7 +7,7 @@ import { User, Mail, Lock, Building2 } from "lucide-react";
 import { AuthShell } from "./AuthShell";
 import { Button, Field, Input } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
-import { registerSchema } from "../../lib/validation";
+import { registerSchema, sanitizeNameInput } from "../../lib/validation";
 
 export default function Register() {
   const { register: registerUser } = useAuth();
@@ -44,13 +44,18 @@ export default function Register() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
-        <Field label="Full name" error={errors.name?.message}>
+        <Field label="Full name *" error={errors.name?.message}>
           <div className="relative">
             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" />
             <Input
               placeholder="Sujon Ahmed"
               className="pl-9"
-              {...register("name")}
+              maxLength={50}
+              {...register("name", {
+                onChange: (e) => {
+                  e.target.value = sanitizeNameInput(e.target.value);
+                },
+              })}
             />
           </div>
         </Field>
@@ -61,30 +66,33 @@ export default function Register() {
             <Input
               placeholder="Lumen"
               className="pl-9"
+              maxLength={100}
               {...register("company")}
             />
           </div>
         </Field>
 
-        <Field label="Email" error={errors.email?.message}>
+        <Field label="Email *" error={errors.email?.message}>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" />
             <Input
               type="email"
               placeholder="you@company.com"
               className="pl-9"
+              maxLength={100}
               {...register("email")}
             />
           </div>
         </Field>
 
-        <Field label="Password" error={errors.password?.message}>
+        <Field label="Password *" error={errors.password?.message}>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft" />
             <Input
               type="password"
               placeholder="At least 6 characters"
               className="pl-9"
+              maxLength={100}
               {...register("password")}
             />
           </div>

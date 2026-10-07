@@ -62,9 +62,10 @@ export function NoteFormDialog({ open, onClose, note, leads, onSaved }) {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-2">
         {/* Content */}
-        <Field label="Note" error={errors.content?.message}>
+        <Field label="Note *" error={errors.content?.message}>
           <Textarea
             rows={6}
+            maxLength={5000}
             placeholder="Write your note here…"
             {...register("content")}
           />

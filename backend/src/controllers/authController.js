@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { users } from "../data/store.js";
+import { isValidEmail, isValidName } from "../middleware/validate.js";
 
 const generateToken = (userId) => {
   const secret = process.env.JWT_SECRET;
@@ -54,17 +55,31 @@ export const register = async (req, res) => {
     });
   }
 
-  if (password.length < 6) {
+  if (!isValidEmail(email)) {
     return res.status(400).json({
       success: false,
-      message: "Password must be at least 6 characters long",
+      message: "Please enter a valid email address (max 100 characters)",
     });
   }
 
-  if (name && !/^[a-zA-Z\s'-]{2,50}$/.test(name)) {
+  if (password.length < 6 || password.length > 100) {
     return res.status(400).json({
       success: false,
-      message: "Validation Error: Name can only contain letters, spaces, hyphens, and apostrophes (min 2 characters)",
+      message: "Password must be between 6 and 100 characters long",
+    });
+  }
+
+  if (name && !isValidName(name)) {
+    return res.status(400).json({
+      success: false,
+      message: "Name can only contain letters, spaces, hyphens, and apostrophes (min 2, max 50 characters)",
+    });
+  }
+
+  if (company && typeof company === "string" && company.length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Company name cannot exceed 100 characters",
     });
   }
 
@@ -114,15 +129,33 @@ export const updateProfile = async (req, res) => {
   }
 
   const { name, company, avatar, password } = req.body;
-  if (name !== undefined) user.name = name;
-  if (company !== undefined) user.company = company;
+  if (name !== undefined) {
+    if (!isValidName(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Name must be 2–50 characters and contain only letters, spaces, hyphens, and apostrophes",
+      });
+    }
+    user.name = name.trim();
+  }
+
+  if (company !== undefined) {
+    if (typeof company === "string" && company.length > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Company name cannot exceed 100 characters",
+      });
+    }
+    user.company = company.trim();
+  }
+
   if (avatar !== undefined) user.avatar = avatar;
 
   if (password) {
-    if (password.length < 6) {
+    if (password.length < 6 || password.length > 100) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters long",
+        message: "Password must be between 6 and 100 characters long",
       });
     }
     user.passwordHash = await bcrypt.hash(password, 10);

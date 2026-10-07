@@ -79,24 +79,25 @@ export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Title */}
-        <Field label="Title" error={errors.title?.message}>
+        <Field label="Title *" error={errors.title?.message}>
           <Input
             placeholder="e.g. Follow up with Acme Corp"
+            maxLength={100}
             {...register("title")}
           />
         </Field>
 
         {/* Description */}
-        <Field label="Description">
-          <Textarea rows={3} placeholder="Optional notes…" {...register("description")} />
+        <Field label="Description" error={errors.description?.message}>
+          <Textarea rows={3} maxLength={1000} placeholder="Optional notes…" {...register("description")} />
         </Field>
 
         {/* Due date + Priority */}
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Due date">
+          <Field label="Due date" error={errors.dueDate?.message}>
             <Input type="date" {...register("dueDate")} />
           </Field>
-          <Field label="Priority">
+          <Field label="Priority" error={errors.priority?.message}>
             <Select {...register("priority")}>
               {TASK_PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -108,7 +109,7 @@ export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
         </div>
 
         {/* Status */}
-        <Field label="Status">
+        <Field label="Status" error={errors.status?.message}>
           <Select {...register("status")}>
             {TASK_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -119,7 +120,7 @@ export function TaskFormDialog({ open, onClose, task, leads, onSaved }) {
         </Field>
 
         {/* Linked lead */}
-        <Field label="Linked lead">
+        <Field label="Linked lead" error={errors.relatedLead?.message}>
           <Select {...register("relatedLead")}>
             <option value="">No linked lead</option>
             {leads.map((l) => (

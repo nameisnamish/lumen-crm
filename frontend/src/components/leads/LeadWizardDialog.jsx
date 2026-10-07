@@ -17,7 +17,7 @@ import {
 import { Dialog, Button, Field, Input, Select, Textarea, Badge } from "../ui";
 import { leadsApi } from "../../lib/services";
 import { LEAD_STAGES, LEAD_PRIORITIES, LEAD_SOURCES } from "../../lib/constants";
-import { leadSchema } from "../../lib/validation";
+import { leadSchema, sanitizeNameInput, sanitizePhoneInput } from "../../lib/validation";
 import { useDebounce } from "../../hooks/useDebounce";
 import { currency } from "../../lib/format";
 
@@ -258,6 +258,7 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
                 <Input
                   placeholder="e.g. Acme Corporation"
                   className="pl-9"
+                  maxLength={100}
                   {...register("company")}
                 />
               </div>
@@ -268,6 +269,7 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
               <div className="flex gap-2">
                 <Input
                   value={tagInput}
+                  maxLength={30}
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Add a tag (e.g. Enterprise, SaaS, Q4)"
                   onKeyDown={(e) => {
@@ -306,7 +308,15 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
         {step === 2 && (
           <div className="space-y-4">
             <Field label="Primary Contact Name *" error={errors.name?.message}>
-              <Input placeholder="e.g. Sarah Jenkins" {...register("name")} />
+              <Input
+                placeholder="e.g. Sarah Jenkins"
+                maxLength={50}
+                {...register("name", {
+                  onChange: (e) => {
+                    e.target.value = sanitizeNameInput(e.target.value);
+                  },
+                })}
+              />
             </Field>
 
             <Field label="Email Address" error={errors.email?.message}>
@@ -314,6 +324,7 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
                 <Input
                   type="email"
                   placeholder="sarah@company.com"
+                  maxLength={100}
                   {...register("email")}
                 />
                 {emailChecking && (
@@ -328,7 +339,15 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
             </Field>
 
             <Field label="Phone Number" error={errors.phone?.message}>
-              <Input placeholder="+1 (555) 234-5678" {...register("phone")} />
+              <Input
+                placeholder="+1 (555) 234-5678"
+                maxLength={20}
+                {...register("phone", {
+                  onChange: (e) => {
+                    e.target.value = sanitizePhoneInput(e.target.value);
+                  },
+                })}
+              />
             </Field>
 
             {/* Additional Contacts via useFieldArray */}
@@ -358,17 +377,24 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
                   <Input
                     placeholder="Name"
                     className="text-xs"
-                    {...register(`additionalContacts.${index}.name`)}
+                    maxLength={50}
+                    {...register(`additionalContacts.${index}.name`, {
+                      onChange: (e) => {
+                        e.target.value = sanitizeNameInput(e.target.value);
+                      },
+                    })}
                   />
                   <Input
                     placeholder="Email"
                     type="email"
                     className="text-xs"
+                    maxLength={100}
                     {...register(`additionalContacts.${index}.email`)}
                   />
                   <Input
                     placeholder="Role"
                     className="text-xs"
+                    maxLength={50}
                     {...register(`additionalContacts.${index}.role`)}
                   />
                   <Button
@@ -393,6 +419,7 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
               <Input
                 type="number"
                 min="0"
+                max="1000000000"
                 placeholder="0"
                 {...register("value")}
               />
@@ -424,9 +451,10 @@ export function LeadWizardDialog({ open, onClose, onSaved }) {
               </Select>
             </Field>
 
-            <Field label="Notes & Context">
+            <Field label="Notes & Context" error={errors.notes?.message}>
               <Textarea
                 rows={3}
+                maxLength={2000}
                 placeholder="Initial call summary, next steps..."
                 {...register("notes")}
               />

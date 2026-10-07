@@ -1,4 +1,5 @@
 import { leads } from "../data/store.js";
+import { validateLeadPayload } from "../middleware/validate.js";
 
 const uid = () => "lead_" + Math.random().toString(36).slice(2, 9);
 
@@ -22,6 +23,11 @@ export const getLeadById = async (req, res) => {
 };
 
 export const createLead = async (req, res) => {
+  const errors = validateLeadPayload(req.body, false);
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors.join(". ") });
+  }
+
   const newLead = {
     _id: uid(),
     order: 0,
@@ -39,6 +45,11 @@ export const createLead = async (req, res) => {
 export const updateLead = async (req, res) => {
   const index = leads.findIndex((l) => l._id === req.params.id);
   if (index === -1) return res.status(404).json({ success: false, message: "Lead not found" });
+
+  const errors = validateLeadPayload(req.body, true);
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors.join(". ") });
+  }
 
   leads[index] = { ...leads[index], ...req.body, updatedAt: new Date().toISOString() };
   res.json({ success: true, lead: leads[index] });

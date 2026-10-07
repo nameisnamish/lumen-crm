@@ -15,7 +15,7 @@ import {
   Avatar,
 } from "../../components/ui";
 import { authApi } from "../../lib/services";
-import { profileSchema } from "../../lib/validation";
+import { profileSchema, sanitizeNameInput } from "../../lib/validation";
 import { cn } from "../../lib/utils";
 
 function SectionIcon({ icon: Icon, className }) {
@@ -152,18 +152,23 @@ export function ProfileCard({ user, updateUser }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field
-              label="Full name"
+              label="Full name *"
               error={errors.name?.message}
               className="sm:col-span-2"
             >
               <Input
                 placeholder="Your full name"
-                {...register("name")}
+                maxLength={50}
+                {...register("name", {
+                  onChange: (e) => {
+                    e.target.value = sanitizeNameInput(e.target.value);
+                  },
+                })}
               />
             </Field>
 
-            <Field label="Company">
-              <Input placeholder="Your company" {...register("company")} />
+            <Field label="Company" error={errors.company?.message}>
+              <Input placeholder="Your company" maxLength={100} {...register("company")} />
             </Field>
 
             {/* Email is read-only */}
